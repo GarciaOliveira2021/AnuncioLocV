@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Infraestrutura</title>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastrar Nova Infraestrutura</h2>
+    <input type="text" id="nome" placeholder="Nome do Local">
+    <input type="text" id="lat" placeholder="Latitude">
+    <input type="text" id="lng" placeholder="Longitude">
+    <input type="number" id="raio" placeholder="Raio (m)">
+    <input type="number" id="capacidade" placeholder="Capacidade">
+    <button onclick="cadastrarInfraestrutura()">Cadastrar</button>
+    <a href="dashboard.html"><button>Voltar</button></a>
+  </div>
+
+  <script>
+   function cadastrarInfraestrutura() {
+  const nome = document.getElementById("nome").value.trim();
+  const lat = document.getElementById("lat").value.trim();
+  const lng = document.getElementById("lng").value.trim();
+  const raio = document.getElementById("raio").value.trim();
+  const capacidade = document.getElementById("capacidade").value.trim();
+
+  // Validação simples
+  if (!nome || !lat || !lng || !raio || !capacidade) {
+    alert(" Por favor, preencha todos os campos.");
+    return;
+  }
+
+  const xml = `
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ser="http://servico/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:cadastrarInfraestrutura>
+        <infraestrutura>
+         <nome>${nome}</nome>
+         <latitude>${lat}</latitude>
+         <longitude>${lng}</longitude>
+         <raio>${raio}</raio>
+         <capacidade>${capacidade}</capacidade>
+         <infraestrutura>
+      </ser:cadastrarInfraestrutura>
+   </soapenv:Body>
+</soapenv:Envelope>`;
+
+  fetch("http://localhost:3001/cadastrarInfraestrutura", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/xml;charset=UTF-8",
+      "SOAPAction": '""'
+    },
+    body: xml
+  })
+  .then(res => res.text())
+  .then(txt => {
+    alert(" Infraestrutura cadastrada com sucesso!");
+    document.getElementById("nome").value = "";
+    document.getElementById("lat").value = "";
+    document.getElementById("lng").value = "";
+    document.getElementById("raio").value = "";
+    document.getElementById("capacidade").value = "";
+  })
+  .catch(err => {
+    console.error("Erro:", err);
+    alert(" Erro ao cadastrar. Verifique o servidor.");
+  });
+}
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>AnunciosLoc - Login</title>
+  <style>
+    body { font-family: Arial; background: #f2f2f2; padding: 40px; }
+    .container { max-width: 400px; margin: auto; padding: 20px; background: white; box-shadow: 0 0 10px #ccc; border-radius: 8px; }
+    input, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login – Gestor</h2>
+    <input type="email" id="email" placeholder="Email" value="admin@anunciosloc.com">
+    <input type="password" id="senha" placeholder="Senha" value="admin123">
+    <button id="btnLogin">Entrar</button>
+  </div>
+
+  
+<script>
+document.getElementById("btnLogin").addEventListener("click", function () {
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  const envelope = `
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                      xmlns:ser="http://servico/">
+       <soapenv:Header/>
+       <soapenv:Body>
+          <ser:loginGestor>
+             <email>${email}</email>
+             <senha>${senha}</senha>
+          </ser:loginGestor>
+       </soapenv:Body>
+    </soapenv:Envelope>`;
+
+  fetch("http://localhost:3001/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/xml;charset=UTF-8",
+    },
+    body: envelope,
+  })
+  .then(res => res.text())
+  .then(xml => {
+    const retorno = new DOMParser()
+      .parseFromString(xml, "text/xml")
+      .getElementsByTagName("return")[0]?.textContent;
+
+    if (retorno === "sucesso") {
+      alert(" Login bem-sucedido!");
+      window.location.href = "dashboard.html";
+    } else {
+      alert(" Login falhou.");
+    }
+  })
+  .catch(() => alert("Erro ao tentar fazer login. Verifique o servidor."));
+});
+</script>
+</body>
+</html>

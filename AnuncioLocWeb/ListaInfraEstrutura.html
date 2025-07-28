@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Infraestruturas Cadastradas</title>
+  <link rel="stylesheet" href="css/estilo.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Infraestruturas Cadastradas</h2>
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Raio (m)</th>
+          <th>Capacidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Os dados serão inseridos aqui via JavaScript -->
+      </tbody>
+    </table>
+    <a href="dashboard.html"><button>Voltar</button></a>
+  </div>
+
+  <script>
+    function carregarInfraestruturas() {
+      const xml = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ser="http://servico/">
+          <soapenv:Header/>
+          <soapenv:Body>
+            <ser:listarInfraestruturas/>
+          </soapenv:Body>
+        </soapenv:Envelope>
+      `;
+
+      fetch("http://localhost:3001/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/xml;charset=UTF-8",
+          "SOAPAction": '""'
+        },
+        body: xml
+      })
+      .then(res => res.text())
+      .then(txt => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(txt, "text/xml");
+        const lista = xmlDoc.getElementsByTagName("return");
+        const tbody = document.querySelector("#tabela tbody");
+
+        for (let i = 0; i < lista.length; i++) {
+          const infra = lista[i];
+          const nome = infra.getElementsByTagName("nome")[i]?.textContent || "";
+          const lat = infra.getElementsByTagName("latitude")[i]?.textContent || "";
+          const lng = infra.getElementsByTagName("longitude")[i]?.textContent || "";
+          const raio = infra.getElementsByTagName("raio")[i]?.textContent || "";
+          const capacidade = infra.getElementsByTagName("capacidade")[i]?.textContent || "";
+
+          const row = `<tr>
+            <td>${nome}</td>
+            <td>${lat}</td>
+            <td>${lng}</td>
+            <td>${raio}</td>
+            <td>${capacidade}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao carregar infraestruturas:", err);
+        alert(" Erro ao buscar dados. Verifique o servidor.");
+      });
+    }
+
+    carregarInfraestruturas();
+  </script>
+</body>
+</html>

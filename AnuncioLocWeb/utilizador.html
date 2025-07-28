@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - AnunciosLoc</title>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+ <div class="container">
+  <h2>Cadastrar Novo Utilizador</h2>
+
+  <input type="text" id="nome" placeholder="Nome completo" required>
+  <input type="email" id="email" placeholder="Email do utilizador" required>
+  <input type="password" id="senha" placeholder="Senha" required>
+
+  <select id="tipo" required>
+    <option value="">Selecione o tipo</option>
+    <option value="comum">Utilizador Comum</option>
+    <option value="moderador">Moderador</option>
+  </select>
+
+  <button onclick="cadastrarUtilizador()">Cadastrar</button>
+  <p id="mensagem" style="margin-top: 15px;"></p>
+</div>
+
+<script>
+  function cadastrarUtilizador() {
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+    const tipo = document.getElementById('tipo').value;
+
+    if (!nome || !email || !senha || !tipo) {
+      document.getElementById('mensagem').innerText = "Preencha todos os campos.";
+      document.getElementById('mensagem').style.color = "red";
+      return;
+    }
+
+    // Aqui será feita a integração futura com o servidor via SOAP
+    console.log("Utilizador cadastrado:", { nome, email, senha, tipo });
+
+    document.getElementById('mensagem').innerText = "Utilizador cadastrado com sucesso!";
+    document.getElementById('mensagem').style.color = "green";
+
+    // Limpa os campos
+    document.getElementById('nome').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('senha').value = '';
+    document.getElementById('tipo').value = '';
+  }
+</script>
+
+</body>
+</html>
